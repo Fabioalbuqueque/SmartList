@@ -1,0 +1,45 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Produtos</p>
+      <h2>Cadastro e consulta de produtos</h2>
+    </div>
+    <a class="button-link" routerLink="/produtos/novo">+ Novo produto</a>
+  </header>
+
+  <div class="card-list">
+    @for (product of products(); track product.id) {
+      <article class="card">
+        @if (editingId() === product.id) {
+          <div class="form-card">
+            <label>Nome <input [(ngModel)]="editForm.name" /></label>
+            <label>Categoria
+              <select [(ngModel)]="editForm.categoryId" (ngModelChange)="editForm.category = data.getCategoryById($event)?.name ?? editForm.category ?? ''">
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+            </label>
+            <label>Marca <input [(ngModel)]="editForm.brand" /></label>
+            <label>Preço médio <input type="number" step="0.01" [(ngModel)]="editForm.averagePrice" /></label>
+            <label>Observações <textarea [(ngModel)]="editForm.notes"></textarea></label>
+            <div class="actions">
+              <button type="button" (click)="saveEdit()">Salvar</button>
+              <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+            </div>
+          </div>
+        } @else {
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.category }}</p>
+          <p>Marca: {{ product.brand || '—' }}</p>
+          <p>Preço médio: R$ {{ product.averagePrice | number:'1.2-2' }}</p>
+          @if (product.notes) { <p class="notes">{{ product.notes }}</p> }
+          <div class="actions">
+            <button type="button" class="btn-secondary btn-sm" (click)="startEdit(product)">Editar</button>
+            <button type="button" class="btn-danger btn-sm" (click)="deleteProduct(product.id, product.name)">Excluir</button>
+          </div>
+        }
+      </article>
+    }
+  </div>
+</section>

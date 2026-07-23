@@ -1,0 +1,64 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Criar nova lista</p>
+      <h2>Preencha os dados da lista</h2>
+    </div>
+  </header>
+
+  <form class="form-card" (ngSubmit)="submit()">
+    <label>
+      Nome da lista *
+      <input [(ngModel)]="form.name" name="name" required />
+    </label>
+
+    <label>
+      Responsável *
+      <input [(ngModel)]="form.responsible" name="responsible" required />
+    </label>
+
+    <label>
+      Tipo *
+      <select [(ngModel)]="form.type" name="type">
+        @for (type of listTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Local da compra *
+      <input
+        [(ngModel)]="form.location"
+        name="location"
+        required
+        autocomplete="off"
+        (focus)="showLocationSuggestions = true"
+        (input)="form.locationId = ''; showLocationSuggestions = true"
+      />
+    </label>
+    @if (showLocationSuggestions && form.location) {
+      <ul class="autocomplete-list">
+        @for (loc of locationSuggestions; track loc.id) {
+          <li (click)="selectLocation(loc.id, loc.name)">{{ loc.name }} · {{ loc.city }}</li>
+        }
+      </ul>
+    }
+
+    <label>
+      Data *
+      <input type="date" [(ngModel)]="form.date" name="date" required />
+    </label>
+
+    <label>
+      Observações
+      <textarea [(ngModel)]="form.notes" name="notes"></textarea>
+    </label>
+
+    @if (error) {
+      <p class="message error">{{ error }}</p>
+    }
+
+    <button type="submit">Criar lista</button>
+  </form>
+</section>

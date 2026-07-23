@@ -1,0 +1,30 @@
+.page { display: flex; flex-direction: column; gap: 16px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; color: #4b7bec; font-weight: 700; }
+.button-link, .details-link { display: inline-block; border-radius: 10px; padding: 10px 14px; background: #2c5aa0; color: white; text-decoration: none; border: 0; cursor: pointer; font: inherit; }
+.form-card { display: flex; flex-direction: column; gap: 12px; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08); }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+input, select, textarea { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font: inherit; }
+button, .btn { border: 0; border-radius: 10px; padding: 10px 14px; background: #2c5aa0; color: white; cursor: pointer; font: inherit; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: #eef4ff; color: #2c5aa0; }
+.btn-danger { background: #fee2e2; color: #dc2626; }
+.btn-sm { padding: 6px 10px; font-size: 0.85rem; }
+.card-list, .list-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.card, .list-card, .panel { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08); }
+.pill { background: #eef4ff; color: #2c5aa0; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; }
+.notes { color: #64748b; margin-top: 8px; }
+.message { color: #16a34a; font-weight: 600; }
+.message.error { color: #dc2626; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.autocomplete-list { list-style: none; margin: 0; padding: 0; border: 1px solid #cbd5e1; border-radius: 10px; max-height: 160px; overflow-y: auto; }
+.autocomplete-list li { padding: 8px 12px; cursor: pointer; }
+.autocomplete-list li:hover { background: #eef4ff; }
+.progress-bar { height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+.progress-bar span { display: block; height: 100%; background: #2c5aa0; border-radius: 999px; transition: width 0.3s; }
+.progress-bar.over span { background: #dc2626; }
+.chart-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.chart-bar .bar { height: 24px; border-radius: 6px; min-width: 4px; }
+.chart-bar .label { flex: 1; font-size: 0.9rem; }
+.chart-bar .value { font-weight: 700; font-size: 0.85rem; }
+@media (max-width: 900px) { .card-list, .list-grid { grid-template-columns: 1fr; } }

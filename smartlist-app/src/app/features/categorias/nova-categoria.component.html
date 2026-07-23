@@ -1,0 +1,27 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Nova categoria</p>
+      <h2>Cadastre uma categoria personalizada</h2>
+    </div>
+  </header>
+
+  <form class="form-card" (ngSubmit)="submit()">
+    <label>
+      Nome
+      <input [(ngModel)]="form.name" name="name" required />
+    </label>
+
+    <label>
+      Ícone
+      <input [(ngModel)]="form.icon" name="icon" />
+    </label>
+
+    <label>
+      Cor
+      <input type="color" [(ngModel)]="form.color" name="color" />
+    </label>
+
+    <button type="submit">Salvar categoria</button>
+  </form>
+</section>

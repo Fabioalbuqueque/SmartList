@@ -1,0 +1,47 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Categorias</p>
+      <h2>Categorias padrão e personalizadas</h2>
+    </div>
+    <a class="button-link" routerLink="/categorias/nova">+ Nova categoria</a>
+  </header>
+
+  @if (message) {
+    <p class="message error">{{ message }}</p>
+  }
+
+  <div class="card-list">
+    @for (category of categories(); track category.id) {
+      @if (!category.hidden) {
+        <article class="card">
+          @if (editingId === category.id) {
+            <div class="form-card">
+              <label>Nome <input [(ngModel)]="editForm.name" /></label>
+              <label>Ícone <input [(ngModel)]="editForm.icon" /></label>
+              <label>Cor <input type="color" [(ngModel)]="editForm.color" /></label>
+              <div class="actions">
+                <button type="button" (click)="saveEdit()">Salvar</button>
+                <button type="button" class="btn-secondary" (click)="editingId = null">Cancelar</button>
+              </div>
+            </div>
+          } @else {
+            <div class="title-row">
+              <span class="icon">{{ category.icon }}</span>
+              <h3>{{ category.name }}</h3>
+            </div>
+            <p>{{ category.isDefault ? 'Categoria padrão' : 'Categoria personalizada' }}</p>
+            <div class="actions">
+              <button type="button" class="btn-secondary btn-sm" (click)="startEdit(category)">Editar</button>
+              @if (category.isDefault) {
+                <button type="button" class="btn-secondary btn-sm" (click)="hideCategory(category.id, category.name)">Ocultar</button>
+              } @else {
+                <button type="button" class="btn-danger btn-sm" (click)="deleteCategory(category.id, category.name, category.isDefault)">Excluir</button>
+              }
+            </div>
+          }
+        </article>
+      }
+    }
+  </div>
+</section>

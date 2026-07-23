@@ -1,0 +1,10 @@
+.summary { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08); display: flex; flex-direction: column; gap: 6px; }
+.category-group { margin-bottom: 16px; }
+.category-group h4 { margin-bottom: 8px; color: #2c5aa0; }
+.category-subtotal { text-align: right; color: #64748b; font-size: 0.9rem; margin-top: 4px; }
+.total-line { margin-top: 16px; padding-top: 12px; border-top: 2px solid #2c5aa0; font-size: 1.1rem; }
+.subtotal-preview { color: #2c5aa0; font-weight: 600; }
+.item-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.invoice-photo { max-width: 100%; max-height: 300px; border-radius: 10px; margin-bottom: 10px; }
+.file-label { display: inline-block; padding: 10px 14px; background: #eef4ff; color: #2c5aa0; border-radius: 10px; cursor: pointer; }
+.file-label input { display: none; }

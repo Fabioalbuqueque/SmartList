@@ -1,0 +1,20 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Relatórios</p>
+      <h2>Exportação de relatórios</h2>
+    </div>
+  </header>
+
+  <p class="notes">Exportação em CSV (compatível com Excel). Período: mês corrente para relatórios de gastos.</p>
+
+  <div class="card-list">
+    @for (report of reports; track report) {
+      <article class="card">
+        <h3>{{ report }}</h3>
+        <p>Gere e baixe o relatório para análise financeira.</p>
+        <button type="button" class="btn-sm" (click)="exportReport(report)">Exportar CSV</button>
+      </article>
+    }
+  </div>
+</section>

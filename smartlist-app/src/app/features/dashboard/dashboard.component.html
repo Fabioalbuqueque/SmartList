@@ -1,0 +1,163 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Dashboard financeiro</p>
+      <h2>Resumo do mês</h2>
+    </div>
+  </header>
+
+  <div class="cards">
+    <article class="card">
+      <span>Total gasto</span>
+      <strong>R$ {{ summary().totalSpent | number:'1.2-2' }}</strong>
+    </article>
+    <article class="card">
+      <span>Número de compras</span>
+      <strong>{{ summary().purchases }}</strong>
+    </article>
+    <article class="card">
+      <span>Produtos comprados</span>
+      <strong>{{ summary().products }}</strong>
+    </article>
+    <article class="card">
+      <span>Ticket médio</span>
+      <strong>R$ {{ summary().avgTicket | number:'1.2-2' }}</strong>
+    </article>
+  </div>
+
+  <div class="grid">
+    <article class="panel">
+      <h3>Gastos por categoria</h3>
+      @if (categorySpending().length) {
+        @for (cat of categorySpending(); track cat.categoryId) {
+          <div class="chart-bar">
+            <span class="label">{{ cat.icon }} {{ cat.name }}</span>
+            <span class="bar" [style.width.%]="cat.percent" [style.background]="cat.color"></span>
+            <span class="value">R$ {{ cat.total | number:'1.2-2' }} ({{ cat.percent }}%)</span>
+          </div>
+        }
+      } @else {
+        <p class="notes">Nenhum gasto registrado neste mês.</p>
+      }
+    </article>
+
+    <article class="panel">
+      <h3>Evolução mensal</h3>
+      @for (m of monthlyEvolution(); track m.month) {
+        <div class="chart-bar">
+          <span class="label">{{ m.label }}</span>
+          <span class="bar" [style.width.%]="(m.total / maxMonthly()) * 100" style="background: #2c5aa0"></span>
+          <span class="value">R$ {{ m.total | number:'1.2-2' }}</span>
+        </div>
+      }
+    </article>
+  </div>
+
+  <div class="grid">
+    <article class="panel">
+      <h3>Produtos mais comprados</h3>
+      @if (topProducts().length) {
+        <ul class="list">
+          @for (product of topProducts(); track product.productId) {
+            <li>
+              <span>{{ medals[product.rank - 1] ?? product.rank + 'º' }} {{ product.name }}</span>
+              <strong>{{ product.quantity }} un · R$ {{ product.total | number:'1.2-2' }}</strong>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="notes">Sem dados de produtos.</p>
+      }
+    </article>
+
+    <article class="panel">
+      <h3>Gastos por tipo de lista</h3>
+      @if (listTypeSpending().length) {
+        <ul class="list">
+          @for (item of listTypeSpending(); track item.type) {
+            <li>
+              <span>{{ item.type }} ({{ item.count }})</span>
+              <strong>R$ {{ item.total | number:'1.2-2' }}</strong>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="notes">Sem listas neste mês.</p>
+      }
+    </article>
+  </div>
+
+  <article class="panel">
+    <h3>Metas de gasto</h3>
+    @if (goalProgress().generalPercent > 0 || data.getGoalsForMonth().general > 0) {
+      <div class="goal-item">
+        <div class="goal-header">
+          <span>Meta geral</span>
+          <strong>R$ {{ goalProgress().general | number:'1.2-2' }} / R$ {{ data.getGoalsForMonth().general | number:'1.2-2' }} ({{ goalProgress().generalPercent }}%)</strong>
+        </div>
+        <div class="progress-bar" [class.over]="goalProgress().generalPercent > 100">
+          <span [style.width.%]="goalProgress().generalPercent > 100 ? 100 : goalProgress().generalPercent"></span>
+        </div>
+      </div>
+      @for (cat of goalProgress().byCategory; track cat.categoryId) {
+        @if (cat.goal > 0) {
+          <div class="goal-item">
+            <div class="goal-header">
+              <span>{{ cat.name }}</span>
+              <strong>R$ {{ cat.spent | number:'1.2-2' }} / R$ {{ cat.goal | number:'1.2-2' }} ({{ cat.percent }}%)</strong>
+            </div>
+            <div class="progress-bar" [class.over]="cat.percent > 100">
+              <span [style.width.%]="cat.percent > 100 ? 100 : cat.percent"></span>
+            </div>
+          </div>
+        }
+      }
+    } @else {
+      <p class="notes">Defina metas em <a routerLink="/configuracoes">Configurações</a>.</p>
+    }
+  </article>
+
+  <div class="grid">
+    <article class="panel">
+      <h3>Evolução de preços</h3>
+      @if (priceVariations().length) {
+        <ul class="list">
+          @for (v of priceVariations(); track v.productId) {
+            <li>
+              <span>{{ v.name }}</span>
+              <strong [class.up]="v.changePercent > 0" [class.down]="v.changePercent < 0">
+                {{ v.changePercent > 0 ? '⬆' : '⬇' }} {{ v.changePercent | number:'1.1-1' }}%
+              </strong>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="notes">Precisa de pelo menos 2 registros de preço por produto.</p>
+      }
+    </article>
+
+    <article class="panel">
+      <h3>Últimas compras</h3>
+      <ul class="list">
+        @for (list of recentLists(); track list.id) {
+          <li>
+            <span>{{ list.name }} · {{ list.date }}</span>
+            <strong>R$ {{ list.total | number:'1.2-2' }}</strong>
+          </li>
+        }
+      </ul>
+    </article>
+  </div>
+
+  <article class="panel">
+    <h3>Locais de compra</h3>
+    <ul class="list">
+      @for (location of locationRanking(); track location.id) {
+        <li>
+          <span>{{ location.name }} · {{ location.city }}</span>
+          <strong>{{ location.purchases }} compras · R$ {{ location.total | number:'1.2-2' }}</strong>
+        </li>
+      }
+    </ul>
+  </article>
+</section>

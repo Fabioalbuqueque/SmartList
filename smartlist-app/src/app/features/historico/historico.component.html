@@ -1,0 +1,79 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Histórico</p>
+      <h2>Pesquisar compras anteriores</h2>
+    </div>
+    <button type="button" class="btn-secondary" (click)="clearFilters()">Limpar filtros</button>
+  </header>
+
+  <form class="form-card filters">
+    <label>
+      Nome da lista
+      <input (input)="updateFilter('name', $any($event.target).value)" placeholder="Ex: Churrasco" />
+    </label>
+    <label>
+      Responsável
+      <input (input)="updateFilter('responsible', $any($event.target).value)" />
+    </label>
+    <label>
+      Tipo
+      <select (change)="updateFilter('type', $any($event.target).value)">
+        <option value="">Todos</option>
+        @for (type of listTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Categoria
+      <select (change)="updateFilter('categoryId', $any($event.target).value)">
+        <option value="">Todas</option>
+        @for (cat of categories(); track cat.id) {
+          <option [value]="cat.id">{{ cat.name }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Produto
+      <select (change)="updateFilter('productId', $any($event.target).value)">
+        <option value="">Todos</option>
+        @for (prod of products(); track prod.id) {
+          <option [value]="prod.id">{{ prod.name }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Local
+      <input (input)="updateFilter('location', $any($event.target).value)" />
+    </label>
+    <label>
+      Data de
+      <input type="date" (change)="updateFilter('dateFrom', $any($event.target).value)" />
+    </label>
+    <label>
+      Data até
+      <input type="date" (change)="updateFilter('dateTo', $any($event.target).value)" />
+    </label>
+  </form>
+
+  <p class="results-count">{{ results().length }} lista(s) encontrada(s)</p>
+
+  <div class="list-grid">
+    @for (list of results(); track list.id) {
+      <article class="list-card">
+        <div class="top-row">
+          <h3>{{ list.name }}</h3>
+          <span class="pill">{{ list.type }}</span>
+        </div>
+        <p><strong>Responsável:</strong> {{ list.responsible }}</p>
+        <p><strong>Local:</strong> {{ list.location }}</p>
+        <p><strong>Data:</strong> {{ list.date }}</p>
+        <p><strong>Total:</strong> R$ {{ list.total | number:'1.2-2' }} ({{ list.items }} itens)</p>
+        <a class="details-link" [routerLink]="['/listas', list.id]">Ver detalhes</a>
+      </article>
+    } @empty {
+      <p class="notes">Nenhuma lista encontrada com os filtros aplicados.</p>
+    }
+  </div>
+</section>

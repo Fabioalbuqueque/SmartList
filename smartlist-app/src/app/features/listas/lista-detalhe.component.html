@@ -1,0 +1,117 @@
+<ng-container *ngIf="list()">
+  <section class="page">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Detalhe da lista</p>
+        <h2>{{ list()?.name }}</h2>
+      </div>
+      <div class="actions">
+        <span class="pill">{{ list()?.type }}</span>
+        <button type="button" class="btn-danger btn-sm" (click)="deleteList()">Excluir lista</button>
+      </div>
+    </header>
+
+    <div class="summary">
+      <p><strong>Responsável:</strong> {{ list()?.responsible }}</p>
+      <p><strong>Local:</strong> {{ list()?.location }}</p>
+      <p><strong>Data:</strong> {{ list()?.date }}</p>
+      <p><strong>Itens:</strong> {{ list()?.items }} · <strong>Total:</strong> R$ {{ list()?.total | number:'1.2-2' }}</p>
+      <p class="notes" *ngIf="list()?.notes">{{ list()?.notes }}</p>
+    </div>
+
+    <article class="panel">
+      <h3>Foto da nota fiscal</h3>
+      <img *ngIf="list()?.invoicePhoto" [src]="list()?.invoicePhoto" alt="Nota fiscal" class="invoice-photo" />
+      <label class="file-label">
+        <input type="file" accept="image/*" (change)="onInvoiceSelected($event)" />
+        {{ list()?.invoicePhoto ? 'Trocar foto' : 'Anexar foto' }}
+      </label>
+    </article>
+
+    <article class="panel">
+      <h3>{{ editingIndex !== null ? 'Editar produto' : 'Adicionar produto' }}</h3>
+      <form class="form-card" (ngSubmit)="submit()">
+        <label>
+          Categoria
+          <select [(ngModel)]="form.categoryId" name="categoryId">
+            <option *ngFor="let category of data.getVisibleCategories()" [value]="category.id">{{ category.icon }} {{ category.name }}</option>
+          </select>
+        </label>
+
+        <label>
+          Produto (busca)
+          <input [(ngModel)]="form.productSearch" name="productSearch" placeholder="Digite para buscar..." autocomplete="off" />
+        </label>
+        <ul class="autocomplete-list" *ngIf="form.productSearch && !form.selectedProductId">
+          <li *ngFor="let product of filteredProducts" (click)="selectProduct(product.id, product.name)">{{ product.name }} · {{ product.category }}</li>
+          <li (click)="form.selectedProductId = 'new'; form.productName = form.productSearch">
+            + Cadastrar "{{ form.productSearch }}"
+          </li>
+        </ul>
+
+        <label *ngIf="form.selectedProductId === 'new'">
+          Nome do novo produto
+          <input [(ngModel)]="form.productName" name="productName" />
+        </label>
+
+        <label>
+          Quantidade
+          <input type="number" min="1" [(ngModel)]="form.quantity" name="quantity" />
+        </label>
+
+        <label>
+          Valor unitário
+          <input type="number" step="0.01" [(ngModel)]="form.unitValue" name="unitValue" />
+        </label>
+
+        <p class="subtotal-preview" *ngIf="form.quantity && form.unitValue">Subtotal: R$ {{ form.quantity * form.unitValue | number:'1.2-2' }}</p>
+
+        <label>
+          Observações
+          <textarea [(ngModel)]="form.notes" name="notes"></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit">{{ editingIndex !== null ? 'Salvar' : 'Adicionar' }}</button>
+          <button *ngIf="editingIndex !== null" type="button" class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+        </div>
+        <p class="message" *ngIf="message">{{ message }}</p>
+      </form>
+    </article>
+
+    <article class="panel">
+      <h3>Itens da lista</h3>
+      <ng-container *ngIf="groupedItems().length; else emptyItems">
+        <div *ngFor="let group of groupedItems()">
+          <div class="category-group">
+            <h4>{{ group.icon }} {{ group.categoryName | uppercase }}</h4>
+            <ul class="list">
+              <li *ngFor="let item of group.items; let i = index">
+                <span>
+                  {{ item.productName }} — {{ item.quantity }} x R$ {{ item.unitValue | number:'1.2-2' }}
+                  <em class="notes" *ngIf="item.notes">({{ item.notes }})</em>
+                </span>
+                <div class="item-actions">
+                  <strong>Subtotal R$ {{ item.subtotal | number:'1.2-2' }}</strong>
+                  <button type="button" class="btn-secondary btn-sm" (click)="editItemByItem(item)">Editar</button>
+                  <button type="button" class="btn-danger btn-sm" (click)="removeItemByItem(item)">Remover</button>
+                </div>
+              </li>
+            </ul>
+            <p class="category-subtotal">Subtotal {{ group.categoryName }}: R$ {{ group.subtotal | number:'1.2-2' }}</p>
+          </div>
+        </div>
+        <p class="total-line"><strong>TOTAL: {{ list()?.items }} produtos — R$ {{ list()?.total | number:'1.2-2' }}</strong></p>
+      </ng-container>
+      <ng-template #emptyItems>
+        <p>Nenhum item adicionado ainda.</p>
+      </ng-template>
+    </article>
+  </section>
+</ng-container>
+<ng-container *ngIf="!list()">
+  <section class="page">
+    <p>Lista não encontrada.</p>
+    <a routerLink="/listas">Voltar para listas</a>
+  </section>
+</ng-container>

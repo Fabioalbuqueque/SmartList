@@ -1,0 +1,13 @@
+.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.cards .card { display: flex; flex-direction: column; gap: 6px; }
+.cards span { color: #64748b; font-size: 0.85rem; }
+.cards strong { font-size: 1.4rem; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.panel h3 { margin-bottom: 12px; }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.list li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+.goal-item { margin-bottom: 12px; }
+.goal-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.9rem; }
+.up { color: #dc2626; }
+.down { color: #16a34a; }
+@media (max-width: 900px) { .cards, .grid { grid-template-columns: 1fr; } }

@@ -1,0 +1,346 @@
+/* =========================================
+   LAYOUT
+========================================= */
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  background: #f5f7fb;
+}
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  min-height: 100vh;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #214a7a;
+  color: white;
+
+  z-index: 1000;
+
+  overflow-y: auto;
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.brand {
+  position: relative;
+
+  padding: 28px 24px 22px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand h1 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.brand p {
+  margin: 6px 0 0;
+
+  font-size: 13px;
+
+  color: rgba(255, 255, 255, 0.75);
+}
+
+
+/* =========================================
+   MENU
+========================================= */
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 20px 14px;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  color: white;
+
+  text-decoration: none;
+
+  border-radius: 10px;
+
+  font-size: 15px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.nav-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+
+  transform: translateX(3px);
+}
+
+.nav-links a.active {
+  background: rgba(255, 255, 255, 0.18);
+
+  font-weight: 600;
+}
+
+.nav-links .icon {
+  width: 24px;
+
+  display: flex;
+
+  justify-content: center;
+
+  font-size: 19px;
+}
+
+
+/* =========================================
+   CONTEÚDO
+========================================= */
+
+.content {
+  flex: 1;
+
+  margin-left: 280px;
+
+  min-width: 0;
+  min-height: 100vh;
+
+  padding: 24px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   MOBILE HEADER
+========================================= */
+
+.mobile-header {
+  display: none;
+}
+
+
+/* =========================================
+   BOTÃO FECHAR
+========================================= */
+
+.menu-close {
+  display: none;
+}
+
+
+/* =========================================
+   OVERLAY
+========================================= */
+
+.menu-overlay {
+  display: none;
+}
+
+
+/* =========================================
+   RESPONSIVIDADE MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  /* -----------------------------------------
+     HEADER MOBILE
+  ----------------------------------------- */
+
+  .mobile-header {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 15px;
+
+    background: #214a7a;
+    color: white;
+
+    z-index: 900;
+
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.15);
+  }
+
+
+  /* -----------------------------------------
+     BOTÃO HAMBÚRGUER
+  ----------------------------------------- */
+
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    color: white;
+
+    font-size: 25px;
+
+    cursor: pointer;
+  }
+
+
+  /* -----------------------------------------
+     NOME DO APP
+  ----------------------------------------- */
+
+  .mobile-brand {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+  }
+
+  .mobile-brand strong {
+    font-size: 17px;
+  }
+
+  .mobile-brand span {
+    font-size: 11px;
+
+    opacity: 0.75;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+  }
+
+
+  /* -----------------------------------------
+     SIDEBAR MOBILE
+  ----------------------------------------- */
+
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+
+    transform: translateX(-100%);
+
+    transition: transform 0.3s ease;
+
+    box-shadow:
+      5px 0 25px rgba(0, 0, 0, 0.2);
+  }
+
+
+  /* SIDEBAR ABERTA */
+
+  .menu-open .sidebar {
+    transform: translateX(0);
+  }
+
+
+  /* -----------------------------------------
+     BOTÃO X
+  ----------------------------------------- */
+
+  .menu-close {
+    display: flex;
+
+    position: absolute;
+
+    top: 18px;
+    right: 15px;
+
+    width: 38px;
+    height: 38px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.1);
+
+    color: white;
+
+    font-size: 28px;
+
+    cursor: pointer;
+  }
+
+
+  /* -----------------------------------------
+     FUNDO ESCURO
+  ----------------------------------------- */
+
+  .menu-overlay {
+    display: block;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    z-index: 950;
+  }
+
+
+  /* -----------------------------------------
+     CONTEÚDO MOBILE
+  ----------------------------------------- */
+
+  .content {
+    width: 100%;
+
+    margin-left: 0;
+
+    padding:
+      84px
+      15px
+      20px;
+  }
+
+}

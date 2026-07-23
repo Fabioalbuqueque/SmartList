@@ -1,0 +1,95 @@
+<div class="app-shell" [class.menu-open]="menuOpen">
+
+  <!-- HEADER MOBILE -->
+  <header class="mobile-header">
+
+    <button
+      type="button"
+      class="menu-toggle"
+      (click)="toggleMenu()"
+      aria-label="Abrir menu">
+
+      ☰
+
+    </button>
+
+    <div class="mobile-brand">
+      <strong>SmartList</strong>
+      <span>Gestão inteligente de compras</span>
+    </div>
+
+  </header>
+
+
+  <!-- OVERLAY -->
+  @if (menuOpen) {
+    <div
+      class="menu-overlay"
+      (click)="closeMenu()">
+    </div>
+  }
+
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <h1>SmartList</h1>
+
+      <p>
+        Gestão inteligente de compras
+      </p>
+
+      <!-- BOTÃO FECHAR MOBILE -->
+      <button
+        type="button"
+        class="menu-close"
+        (click)="closeMenu()"
+        aria-label="Fechar menu">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- MENU -->
+    <nav class="nav-links">
+
+      @for (item of menuItems; track item.path) {
+
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{
+            exact: item.path === '/'
+          }"
+          (click)="closeMenu()">
+
+          <span class="icon">
+            {{ item.icon }}
+          </span>
+
+          <span>
+            {{ item.label }}
+          </span>
+
+        </a>
+
+      }
+
+    </nav>
+
+  </aside>
+
+
+  <!-- CONTEÚDO -->
+  <main class="content">
+
+    <router-outlet />
+
+  </main>
+
+</div>

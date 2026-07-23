@@ -1,0 +1,45 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Cadastro de produto</p>
+      <h2>Novo produto reutilizável</h2>
+    </div>
+  </header>
+
+  <form class="form-card" (ngSubmit)="submit()">
+    <label>
+      Nome *
+      <input [(ngModel)]="form.name" name="name" required />
+    </label>
+
+    <label>
+      Categoria *
+      <select [(ngModel)]="form.categoryId" name="categoryId" (ngModelChange)="onCategoryChange($event)">
+        @for (cat of categories; track cat.id) {
+          <option [value]="cat.id">{{ cat.icon }} {{ cat.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Marca
+      <input [(ngModel)]="form.brand" name="brand" />
+    </label>
+
+    <label>
+      Preço médio
+      <input type="number" step="0.01" [(ngModel)]="form.averagePrice" name="averagePrice" />
+    </label>
+
+    <label>
+      Observações
+      <textarea [(ngModel)]="form.notes" name="notes"></textarea>
+    </label>
+
+    @if (error) {
+      <p class="message error">{{ error }}</p>
+    }
+
+    <button type="submit">Salvar produto</button>
+  </form>
+</section>

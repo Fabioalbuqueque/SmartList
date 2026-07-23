@@ -1,0 +1,17 @@
+{
+  "name": "SmartList",
+  "short_name": "SmartList",
+  "description": "Gerenciador inteligente de listas de compras",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f9fc",
+  "theme_color": "#2c5aa0",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

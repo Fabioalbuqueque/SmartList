@@ -1,0 +1,31 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Minhas listas</p>
+      <h2>Listas de compras e eventos</h2>
+    </div>
+    <a class="button-link" routerLink="/listas/nova">+ Nova lista</a>
+  </header>
+
+  <div class="list-grid">
+    @for (list of lists(); track list.id) {
+      <article class="list-card">
+        <div class="top-row">
+          <h3>{{ list.name }}</h3>
+          <span class="pill">{{ list.type }}</span>
+        </div>
+        <p><strong>Responsável:</strong> {{ list.responsible }}</p>
+        <p><strong>Local:</strong> {{ list.location }}</p>
+        <p><strong>Data:</strong> {{ list.date }}</p>
+        <p><strong>Itens:</strong> {{ list.items }} · <strong>Total:</strong> R$ {{ list.total | number:'1.2-2' }}</p>
+        @if (list.notes) {
+          <p class="notes">{{ list.notes }}</p>
+        }
+        <div class="actions">
+          <a class="details-link" [routerLink]="['/listas', list.id]">Ver detalhes</a>
+          <button type="button" class="btn-danger btn-sm" (click)="deleteList(list.id, list.name)">Excluir</button>
+        </div>
+      </article>
+    }
+  </div>
+</section>

@@ -1,0 +1,32 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Novo local</p>
+      <h2>Cadastre um estabelecimento</h2>
+    </div>
+  </header>
+
+  <form class="form-card" (ngSubmit)="submit()">
+    <label>
+      Nome
+      <input [(ngModel)]="form.name" name="name" required />
+    </label>
+
+    <label>
+      Cidade
+      <input [(ngModel)]="form.city" name="city" required />
+    </label>
+
+    <label>
+      Compras
+      <input type="number" [(ngModel)]="form.purchases" name="purchases" />
+    </label>
+
+    <label>
+      Total
+      <input type="number" [(ngModel)]="form.total" name="total" />
+    </label>
+
+    <button type="submit">Salvar local</button>
+  </form>
+</section>

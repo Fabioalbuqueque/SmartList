@@ -1,0 +1,41 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Configurações</p>
+      <h2>Preferências e metas de gasto</h2>
+    </div>
+  </header>
+
+  <article class="panel">
+    <h3>Perfil</h3>
+    <p class="notes">Autenticação Firebase será configurada em versão futura. Dados salvos localmente no navegador.</p>
+  </article>
+
+  <article class="panel">
+    <h3>Metas de gasto — {{ month }}</h3>
+    <form class="form-card" (ngSubmit)="saveGoals()">
+      <label>
+        Meta geral (R$)
+        <input type="number" step="0.01" [(ngModel)]="generalGoal" name="generalGoal" />
+      </label>
+
+      <h4>Metas por categoria</h4>
+      @for (cat of categories(); track cat.id) {
+        <label>
+          {{ cat.icon }} {{ cat.name }} (R$)
+          <input
+            type="number"
+            step="0.01"
+            [value]="categoryGoals[cat.id] ?? ''"
+            (input)="updateCategoryGoal(cat.id, $any($event.target).value)"
+          />
+        </label>
+      }
+
+      <button type="submit">Salvar metas</button>
+      @if (message) {
+        <p class="message">{{ message }}</p>
+      }
+    </form>
+  </article>
+</section>

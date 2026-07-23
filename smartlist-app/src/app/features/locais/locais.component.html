@@ -1,0 +1,35 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Locais de compra</p>
+      <h2>Estabelecimentos e cidades</h2>
+    </div>
+    <a class="button-link" routerLink="/locais/novo">+ Novo local</a>
+  </header>
+
+  <div class="card-list">
+    @for (location of locations(); track location.id) {
+      <article class="card">
+        @if (editingId === location.id) {
+          <div class="form-card">
+            <label>Nome <input [(ngModel)]="editForm.name" /></label>
+            <label>Cidade <input [(ngModel)]="editForm.city" /></label>
+            <div class="actions">
+              <button type="button" (click)="saveEdit()">Salvar</button>
+              <button type="button" class="btn-secondary" (click)="editingId = null">Cancelar</button>
+            </div>
+          </div>
+        } @else {
+          <h3>{{ location.name }}</h3>
+          <p>{{ location.city }}</p>
+          <p>Compras: {{ location.purchases }}</p>
+          <p>Total: R$ {{ location.total | number:'1.2-2' }}</p>
+          <div class="actions">
+            <button type="button" class="btn-secondary btn-sm" (click)="startEdit(location)">Editar</button>
+            <button type="button" class="btn-danger btn-sm" (click)="deleteLocation(location.id, location.name)">Excluir</button>
+          </div>
+        }
+      </article>
+    }
+  </div>
+</section>
