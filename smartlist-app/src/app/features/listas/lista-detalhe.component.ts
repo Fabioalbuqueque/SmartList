@@ -35,6 +35,7 @@ export class ListaDetalheComponent implements OnInit {
   message = '';
   editingIndex: number | null = null;
   editingProductName = '';
+  editingProductId = '';
 
   get filteredProducts() {
     return this.data.searchProducts(this.form.productSearch);
@@ -46,6 +47,7 @@ export class ListaDetalheComponent implements OnInit {
 
   selectProduct(productId: string, name: string): void {
     this.form.selectedProductId = productId;
+    this.editingProductId = productId;
     this.form.productSearch = name;
     const product = this.data.products().find((p) => p.id === productId);
     if (product) {
@@ -69,7 +71,10 @@ export class ListaDetalheComponent implements OnInit {
     const categoryId = category?.id ?? 'c11';
     const categoryName = category?.name ?? 'Outros';
 
-    let productId = this.form.selectedProductId;
+    let productId = this.form.selectedProductId || this.editingProductId;
+    const currentItem = this.editingIndex !== null ? this.list()?.products[this.editingIndex] : undefined;
+    const currentProductName = currentItem ? this.data.getProductName(currentItem.productId) : '';
+    const typedProductName = this.form.productSearch.trim();
 
     if (this.form.selectedProductId === 'new' || (!productId && this.form.productName.trim())) {
       const created = this.data.addProduct({
@@ -81,6 +86,27 @@ export class ListaDetalheComponent implements OnInit {
         notes: this.form.notes
       });
       productId = created.id;
+    } else {
+      const exactMatch = this.data.products().find((product) => product.name.toLowerCase() === typedProductName.toLowerCase());
+      const shouldCreateNewProduct = typedProductName && typedProductName.toLowerCase() !== currentProductName.toLowerCase() && !exactMatch;
+
+      if (shouldCreateNewProduct) {
+        const created = this.data.addProduct({
+          name: typedProductName,
+          category: categoryName,
+          categoryId,
+          brand: '',
+          averagePrice: this.form.unitValue,
+          notes: this.form.notes
+        });
+        productId = created.id;
+      } else if (exactMatch) {
+        productId = exactMatch.id;
+      }
+    }
+
+    if (!productId) {
+      productId = currentItem?.productId ?? '';
     }
 
     if (!productId) {
@@ -101,6 +127,7 @@ export class ListaDetalheComponent implements OnInit {
       this.message = 'Produto atualizado!';
       this.editingIndex = null;
       this.editingProductName = '';
+      this.editingProductId = '';
     } else {
       this.data.addItemToList(this.listId, item);
       this.message = 'Produto adicionado com sucesso!';
@@ -115,6 +142,7 @@ export class ListaDetalheComponent implements OnInit {
     const item = list.products[index];
     this.editingIndex = index;
     this.editingProductName = this.data.getProductName(item.productId);
+    this.editingProductId = item.productId;
     this.form = {
       categoryId: item.categoryId,
       productSearch: this.data.getProductName(item.productId),
@@ -148,6 +176,7 @@ export class ListaDetalheComponent implements OnInit {
   cancelEdit(): void {
     this.editingIndex = null;
     this.editingProductName = '';
+    this.editingProductId = '';
     this.resetForm();
   }
 

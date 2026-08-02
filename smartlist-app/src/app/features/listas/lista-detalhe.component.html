@@ -28,8 +28,8 @@
       </label>
     </article>
 
-    <article class="panel">
-      <h3>{{ editingIndex !== null ? 'Editar produto' : 'Adicionar produto' }}</h3>
+    <article class="panel" *ngIf="editingIndex === null">
+      <h3>Adicionar produto</h3>
       <form class="form-card" (ngSubmit)="submit()">
         <label>
           Categoria
@@ -72,8 +72,7 @@
         </label>
 
         <div class="actions">
-          <button type="submit">{{ editingIndex !== null ? 'Salvar' : 'Adicionar' }}</button>
-          <button *ngIf="editingIndex !== null" type="button" class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+          <button type="submit">Adicionar</button>
         </div>
         <p class="message" *ngIf="message">{{ message }}</p>
       </form>
