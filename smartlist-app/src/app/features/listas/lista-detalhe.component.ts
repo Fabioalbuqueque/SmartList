@@ -34,6 +34,7 @@ export class ListaDetalheComponent implements OnInit {
 
   message = '';
   editingIndex: number | null = null;
+  editingProductName = '';
 
   get filteredProducts() {
     return this.data.searchProducts(this.form.productSearch);
@@ -99,6 +100,7 @@ export class ListaDetalheComponent implements OnInit {
       this.data.updateItemInList(this.listId, this.editingIndex, item);
       this.message = 'Produto atualizado!';
       this.editingIndex = null;
+      this.editingProductName = '';
     } else {
       this.data.addItemToList(this.listId, item);
       this.message = 'Produto adicionado com sucesso!';
@@ -112,6 +114,7 @@ export class ListaDetalheComponent implements OnInit {
     if (!list) return;
     const item = list.products[index];
     this.editingIndex = index;
+    this.editingProductName = this.data.getProductName(item.productId);
     this.form = {
       categoryId: item.categoryId,
       productSearch: this.data.getProductName(item.productId),
@@ -144,6 +147,7 @@ export class ListaDetalheComponent implements OnInit {
 
   cancelEdit(): void {
     this.editingIndex = null;
+    this.editingProductName = '';
     this.resetForm();
   }
 

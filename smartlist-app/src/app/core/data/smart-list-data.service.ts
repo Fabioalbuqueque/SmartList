@@ -136,6 +136,30 @@ export interface GroupedListItems {
 
 const STORAGE_KEY = 'smartlist-data';
 
+const createMemoryStorage = (): Storage => {
+  const store = new Map<string, string>();
+  return {
+    get length() {
+      return store.size;
+    },
+    clear(): void {
+      store.clear();
+    },
+    getItem(key: string): string | null {
+      return store.has(key) ? store.get(key)! : null;
+    },
+    key(index: number): string | null {
+      return Array.from(store.keys())[index] ?? null;
+    },
+    removeItem(key: string): void {
+      store.delete(key);
+    },
+    setItem(key: string, value: string): void {
+      store.set(key, value);
+    }
+  } as Storage;
+};
+
 const DEFAULT_CATEGORIES: Category[] = [
   { id: 'c1', name: 'Alimentos', icon: '🥦', color: '#4f8a5b', isDefault: true },
   { id: 'c2', name: 'Limpeza', icon: '🧴', color: '#4b7bec', isDefault: true },
@@ -150,65 +174,6 @@ const DEFAULT_CATEGORIES: Category[] = [
   { id: 'c11', name: 'Outros', icon: '📦', color: '#95a5a6', isDefault: true }
 ];
 
-const SEED_LISTS: ShoppingList[] = [
-  {
-    id: '1',
-    name: 'Compras do Mês',
-    responsible: 'Ana',
-    type: 'Doméstica',
-    location: 'Supermercado Central',
-    locationId: 'l1',
-    date: '2026-07-10',
-    items: 3,
-    total: 82.7,
-    notes: 'Itens básicos da casa',
-    products: [
-      { productId: 'p1', categoryId: 'c1', quantity: 2, unitValue: 29.9, subtotal: 59.8, notes: 'Pacote grande' },
-      { productId: 'p2', categoryId: 'c2', quantity: 1, unitValue: 22.9, subtotal: 22.9, notes: 'Concentrado' }
-    ]
-  },
-  {
-    id: '2',
-    name: 'Churrasco',
-    responsible: 'Carlos',
-    type: 'Evento',
-    location: 'Mercado do Bairro',
-    locationId: 'l2',
-    date: '2026-07-16',
-    items: 2,
-    total: 37,
-    notes: 'Carnes e bebidas',
-    products: [
-      { productId: 'p3', categoryId: 'c3', quantity: 2, unitValue: 18.5, subtotal: 37, notes: '500ml' }
-    ]
-  },
-  {
-    id: '3',
-    name: 'Material Escolar',
-    responsible: 'Beatriz',
-    type: 'Trabalho',
-    location: 'Casa das Canetas',
-    locationId: 'l3',
-    date: '2026-07-20',
-    items: 0,
-    total: 0,
-    notes: 'Materiais para o escritório',
-    products: []
-  }
-];
-
-const SEED_PRODUCTS: Product[] = [
-  { id: 'p1', name: 'Arroz', category: 'Alimentos', categoryId: 'c1', brand: 'Tio João', averagePrice: 29.9, notes: 'Pacote 5kg' },
-  { id: 'p2', name: 'Sabão em Pó', category: 'Limpeza', categoryId: 'c2', brand: 'Omo', averagePrice: 22.9, notes: 'Concentrado' },
-  { id: 'p3', name: 'Shampoo', category: 'Higiene', categoryId: 'c3', brand: 'Head & Shoulders', averagePrice: 18.5, notes: '500ml' }
-];
-
-const SEED_LOCATIONS: PurchaseLocation[] = [
-  { id: 'l1', name: 'Supermercado Central', city: 'Recife', purchases: 0, total: 0 },
-  { id: 'l2', name: 'Mercado do Bairro', city: 'Olinda', purchases: 0, total: 0 },
-  { id: 'l3', name: 'Casa das Canetas', city: 'Recife', purchases: 0, total: 0 }
-];
-
 interface PersistedData {
   lists: ShoppingList[];
   products: Product[];
@@ -220,6 +185,10 @@ interface PersistedData {
 
 @Injectable({ providedIn: 'root' })
 export class SmartListDataService {
+  private readonly storage: Storage = typeof globalThis.localStorage !== 'undefined'
+    ? globalThis.localStorage
+    : createMemoryStorage();
+
   private readonly listsSignal = signal<ShoppingList[]>([]);
   private readonly productsSignal = signal<Product[]>([]);
   private readonly categoriesSignal = signal<Category[]>([]);
@@ -241,7 +210,7 @@ export class SmartListDataService {
   }
 
   private loadFromStorage(): void {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = this.storage.getItem(STORAGE_KEY);
     if (raw) {
       try {
         const data = JSON.parse(raw) as PersistedData;
@@ -254,19 +223,16 @@ export class SmartListDataService {
         this.recalculateLocationStats();
         return;
       } catch {
-        localStorage.removeItem(STORAGE_KEY);
+        this.storage.removeItem(STORAGE_KEY);
       }
     }
 
-    this.listsSignal.set(SEED_LISTS);
-    this.productsSignal.set(SEED_PRODUCTS);
+    this.listsSignal.set([]);
+    this.productsSignal.set([]);
     this.categoriesSignal.set(DEFAULT_CATEGORIES);
-    this.locationsSignal.set(SEED_LOCATIONS);
-    this.priceHistorySignal.set([
-      { productId: 'p1', value: 29.9, date: '2026-07-10' },
-      { productId: 'p2', value: 22.9, date: '2026-07-10' },
-      { productId: 'p3', value: 18.5, date: '2026-07-10' }
-    ]);
+    this.locationsSignal.set([]);
+    this.priceHistorySignal.set([]);
+    this.goalsSignal.set([]);
     this.recalculateLocationStats();
     this.persist();
   }
@@ -280,7 +246,7 @@ export class SmartListDataService {
       priceHistory: this.priceHistorySignal(),
       goals: this.goalsSignal()
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    this.storage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
   private recalculateListTotals(products: ShoppingListItem[]): { items: number; total: number } {

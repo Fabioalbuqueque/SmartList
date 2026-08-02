@@ -79,6 +79,71 @@
       </form>
     </article>
 
+    <div class="modal-backdrop" *ngIf="editingIndex !== null">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Item em edição</p>
+            <h3>{{ editingProductName || 'Produto selecionado' }}</h3>
+          </div>
+          <button type="button" class="btn-secondary btn-sm" (click)="cancelEdit()">Fechar</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="editing-summary">
+            Você está editando este item da lista. Ajuste os campos abaixo e salve para aplicar as alterações.
+          </p>
+          <form class="form-card" (ngSubmit)="submit()">
+            <label>
+              Categoria
+              <select [(ngModel)]="form.categoryId" name="categoryId">
+                <option *ngFor="let category of data.getVisibleCategories()" [value]="category.id">{{ category.icon }} {{ category.name }}</option>
+              </select>
+            </label>
+
+            <label>
+              Produto (busca)
+              <input [(ngModel)]="form.productSearch" name="productSearch" placeholder="Digite para buscar..." autocomplete="off" />
+            </label>
+            <ul class="autocomplete-list" *ngIf="form.productSearch && !form.selectedProductId">
+              <li *ngFor="let product of filteredProducts" (click)="selectProduct(product.id, product.name)">{{ product.name }} · {{ product.category }}</li>
+              <li (click)="form.selectedProductId = 'new'; form.productName = form.productSearch">
+                + Cadastrar "{{ form.productSearch }}"
+              </li>
+            </ul>
+
+            <label *ngIf="form.selectedProductId === 'new'">
+              Nome do novo produto
+              <input [(ngModel)]="form.productName" name="productName" />
+            </label>
+
+            <label>
+              Quantidade
+              <input type="number" min="1" [(ngModel)]="form.quantity" name="quantity" />
+            </label>
+
+            <label>
+              Valor unitário
+              <input type="number" step="0.01" [(ngModel)]="form.unitValue" name="unitValue" />
+            </label>
+
+            <p class="subtotal-preview" *ngIf="form.quantity && form.unitValue">Subtotal: R$ {{ form.quantity * form.unitValue | number:'1.2-2' }}</p>
+
+            <label>
+              Observações
+              <textarea [(ngModel)]="form.notes" name="notes"></textarea>
+            </label>
+
+            <div class="actions">
+              <button type="submit">Salvar</button>
+              <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+            </div>
+            <p class="message" *ngIf="message">{{ message }}</p>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <article class="panel">
       <h3>Itens da lista</h3>
       <ng-container *ngIf="groupedItems().length; else emptyItems">
@@ -86,7 +151,7 @@
           <div class="category-group">
             <h4>{{ group.icon }} {{ group.categoryName | uppercase }}</h4>
             <ul class="list">
-              <li *ngFor="let item of group.items; let i = index">
+              <li *ngFor="let item of group.items; let i = index" [class.is-editing]="editingIndex === item.originalIndex">
                 <span>
                   {{ item.productName }} — {{ item.quantity }} x R$ {{ item.unitValue | number:'1.2-2' }}
                   <em class="notes" *ngIf="item.notes">({{ item.notes }})</em>

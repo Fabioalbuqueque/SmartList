@@ -5,7 +5,7 @@ describe('SmartListDataService', () => {
   let service: SmartListDataService;
 
   beforeEach(() => {
-    localStorage.clear();
+    globalThis.localStorage?.clear();
     service = new SmartListDataService();
   });
 
@@ -50,6 +50,12 @@ describe('SmartListDataService', () => {
     expect(service.priceHistory().length).toBe(before + 1);
   });
 
+  it('deve iniciar vazio quando não há dados salvos', () => {
+    expect(service.lists()).toEqual([]);
+    expect(service.products()).toEqual([]);
+    expect(service.locations()).toEqual([]);
+  });
+
   it('deve filtrar listas por responsável', () => {
     const results = service.filterLists({ responsible: 'Ana' });
     expect(results.every((l) => l.responsible.includes('Ana'))).toBe(true);
@@ -60,7 +66,24 @@ describe('SmartListDataService', () => {
     expect(service.categories().find((c) => c.id === 'c1')).toBeDefined();
   });
 
-  it('deve calcular gastos por categoria', () => {
+  it('deve calcular gastos por categoria quando houver itens', () => {
+    const list = service.addList({
+      name: 'Compras da semana',
+      responsible: 'Maria',
+      type: 'Doméstica',
+      location: 'Mercado',
+      date: '2026-07-20',
+      notes: 'Itens básicos'
+    });
+
+    service.addItemToList(list.id, {
+      productId: 'p1',
+      categoryId: 'c1',
+      quantity: 1,
+      unitValue: 12.5,
+      notes: ''
+    });
+
     const spending = service.getSpendingByCategory();
     expect(spending.length).toBeGreaterThan(0);
     expect(spending[0].total).toBeGreaterThan(0);
