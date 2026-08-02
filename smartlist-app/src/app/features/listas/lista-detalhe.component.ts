@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { SmartListDataService } from '../../core/data/smart-list-data.service';
+import { GroupedListItems, SmartListDataService } from '../../core/data/smart-list-data.service';
 
 @Component({
   selector: 'app-lista-detalhe',
@@ -130,18 +130,16 @@ export class ListaDetalheComponent implements OnInit {
     }
   }
 
-  editItemByItem(item: any): void {
-    const list = this.list();
-    if (!list) return;
-    const idx = list.products.indexOf(item as any);
-    if (idx >= 0) this.editItem(idx);
+  editItemByItem(item: GroupedListItems['items'][number]): void {
+    if (item.originalIndex >= 0) {
+      this.editItem(item.originalIndex);
+    }
   }
 
-  removeItemByItem(item: any): void {
-    const list = this.list();
-    if (!list) return;
-    const idx = list.products.indexOf(item as any);
-    if (idx >= 0) this.removeItem(idx);
+  removeItemByItem(item: GroupedListItems['items'][number]): void {
+    if (item.originalIndex >= 0) {
+      this.removeItem(item.originalIndex);
+    }
   }
 
   cancelEdit(): void {
