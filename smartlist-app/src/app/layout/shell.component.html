@@ -15,7 +15,7 @@
 
     <div class="mobile-brand">
       <strong>SmartList</strong>
-      <span>Gestão inteligente de compras</span>
+      <span>{{ userName() ? userName() + ' · SmartList' : 'Gestão inteligente de compras' }}</span>
     </div>
 
   </header>
@@ -38,7 +38,7 @@
       <h1>SmartList</h1>
 
       <p>
-        Gestão inteligente de compras
+        {{ userName() ? userName() + ' · SmartList' : 'Gestão inteligente de compras' }}
       </p>
 
       <!-- BOTÃO FECHAR MOBILE -->
@@ -84,6 +84,21 @@
 
   </aside>
 
+
+  @if (showNamePrompt()) {
+    <div class="welcome-modal">
+      <div class="welcome-card">
+        <p class="eyebrow">Bem-vindo ao SmartList</p>
+        <h2>Como você quer ser chamado?</h2>
+        <p>Digite um nome para aparecer próximo ao SmartList.</p>
+        <input type="text" [(ngModel)]="draftName" placeholder="Seu nome" />
+        <div class="actions">
+          <button type="button" class="btn-primary" (click)="saveUserName()">Salvar</button>
+          <button type="button" class="btn-secondary" (click)="skipUserName()">Pular</button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- CONTEÚDO -->
   <main class="content">

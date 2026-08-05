@@ -166,6 +166,106 @@
 
 
 /* =========================================
+   WELCOME / ONBOARDING
+========================================= */
+
+.welcome-modal {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(33, 74, 122, 0.92), rgba(59, 130, 246, 0.75));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1200;
+}
+
+.welcome-card {
+  width: min(500px, 100%);
+  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(33, 74, 122, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.welcome-card h2 {
+  margin: 0;
+  color: #214a7a;
+  font-size: 1.45rem;
+}
+
+.welcome-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.welcome-card input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-sizing: border-box;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.welcome-card input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+}
+
+.welcome-card .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.welcome-card .btn-primary,
+.welcome-card .btn-secondary {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.welcome-card .btn-primary:hover,
+.welcome-card .btn-secondary:hover {
+  transform: translateY(-1px);
+}
+
+.welcome-card .btn-primary {
+  background: linear-gradient(135deg, #214a7a, #3b82f6);
+  color: white;
+  box-shadow: 0 8px 18px rgba(33, 74, 122, 0.18);
+}
+
+.welcome-card .btn-secondary {
+  background: #eef2f7;
+  color: #334155;
+}
+
+/* =========================================
    RESPONSIVIDADE MOBILE
 ========================================= */
 
