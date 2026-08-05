@@ -88,4 +88,52 @@ describe('SmartListDataService', () => {
     expect(spending.length).toBeGreaterThan(0);
     expect(spending[0].total).toBeGreaterThan(0);
   });
+
+  it('deve salvar e recuperar o perfil do usuário com localização do estabelecimento', () => {
+    service.updateUserProfile({
+      name: 'Ana',
+      establishmentLocation: {
+        latitude: -23.5505,
+        longitude: -46.6333,
+        label: 'Loja Centro'
+      }
+    });
+
+    const profile = service.getUserProfile();
+    expect(profile.name).toBe('Ana');
+    expect(profile.establishmentLocation?.label).toBe('Loja Centro');
+  });
+
+  it('deve preservar o nome do produto dentro da lista mesmo se o produto for renomeado', () => {
+    const list = service.addList({
+      name: 'Compras do mês',
+      responsible: 'Ana',
+      type: 'Doméstica',
+      location: 'Mercado',
+      date: '2026-08-02',
+      notes: ''
+    });
+
+    const product = service.addProduct({
+      name: 'Arroz',
+      category: 'Alimentos',
+      categoryId: 'c1',
+      brand: '',
+      averagePrice: 5.5,
+      notes: ''
+    });
+
+    service.addItemToList(list.id, {
+      productId: product.id,
+      categoryId: 'c1',
+      quantity: 1,
+      unitValue: 5.5,
+      notes: ''
+    });
+
+    service.updateProduct(product.id, { name: 'Arroz integral' });
+
+    const savedItem = service.lists().find((item) => item.id === list.id)!.products[0];
+    expect(savedItem.productName).toBe('Arroz');
+  });
 });

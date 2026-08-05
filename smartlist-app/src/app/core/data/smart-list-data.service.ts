@@ -126,6 +126,17 @@ export interface HistoryFilters {
   dateTo?: string;
 }
 
+export interface EstablishmentLocation {
+  latitude?: number;
+  longitude?: number;
+  label: string;
+}
+
+export interface UserProfile {
+  name: string;
+  establishmentLocation?: EstablishmentLocation;
+}
+
 export interface GroupedListItems {
   categoryId: string;
   categoryName: string;
@@ -181,6 +192,7 @@ interface PersistedData {
   locations: PurchaseLocation[];
   priceHistory: PriceHistoryEntry[];
   goals: SpendingGoal[];
+  userProfile: UserProfile;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -195,6 +207,7 @@ export class SmartListDataService {
   private readonly locationsSignal = signal<PurchaseLocation[]>([]);
   private readonly priceHistorySignal = signal<PriceHistoryEntry[]>([]);
   private readonly goalsSignal = signal<SpendingGoal[]>([]);
+  private readonly userProfileSignal = signal<UserProfile>({ name: '', establishmentLocation: undefined });
 
   readonly lists = this.listsSignal.asReadonly();
   readonly products = this.productsSignal.asReadonly();
@@ -202,6 +215,7 @@ export class SmartListDataService {
   readonly locations = this.locationsSignal.asReadonly();
   readonly priceHistory = this.priceHistorySignal.asReadonly();
   readonly goals = this.goalsSignal.asReadonly();
+  readonly userProfile = this.userProfileSignal.asReadonly();
 
   readonly listTypes = ['Doméstica', 'Evento', 'Trabalho', 'Viagem', 'Outros'];
 
@@ -220,6 +234,7 @@ export class SmartListDataService {
         this.locationsSignal.set(data.locations ?? []);
         this.priceHistorySignal.set(data.priceHistory ?? []);
         this.goalsSignal.set(data.goals ?? []);
+        this.userProfileSignal.set(data.userProfile ?? { name: '', establishmentLocation: undefined });
         this.recalculateLocationStats();
         return;
       } catch {
@@ -233,6 +248,7 @@ export class SmartListDataService {
     this.locationsSignal.set([]);
     this.priceHistorySignal.set([]);
     this.goalsSignal.set([]);
+    this.userProfileSignal.set({ name: '', establishmentLocation: undefined });
     this.recalculateLocationStats();
     this.persist();
   }
@@ -244,7 +260,8 @@ export class SmartListDataService {
       categories: this.categoriesSignal(),
       locations: this.locationsSignal(),
       priceHistory: this.priceHistorySignal(),
-      goals: this.goalsSignal()
+      goals: this.goalsSignal(),
+      userProfile: this.userProfileSignal()
     };
     this.storage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
@@ -275,6 +292,19 @@ export class SmartListDataService {
 
   getCategoryById(categoryId: string): Category | undefined {
     return this.categoriesSignal().find((c) => c.id === categoryId);
+  }
+
+  getUserProfile(): UserProfile {
+    return this.userProfileSignal();
+  }
+
+  updateUserProfile(profile: Partial<UserProfile>): void {
+    this.userProfileSignal.update((current) => ({
+      ...current,
+      ...profile,
+      establishmentLocation: profile.establishmentLocation ?? current.establishmentLocation
+    }));
+    this.persist();
   }
 
   getVisibleCategories(): Category[] {
