@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 export interface ShoppingListItem {
   productId: string;
+  productName?: string;
   categoryId: string;
   quantity: number;
   unitValue: number;
@@ -235,6 +236,7 @@ export class SmartListDataService {
         this.priceHistorySignal.set(data.priceHistory ?? []);
         this.goalsSignal.set(data.goals ?? []);
         this.userProfileSignal.set(data.userProfile ?? { name: '', establishmentLocation: undefined });
+        this.repairProductNames();
         this.recalculateLocationStats();
         return;
       } catch {
@@ -287,7 +289,56 @@ export class SmartListDataService {
   }
 
   getProductName(productId: string): string {
-    return this.productsSignal().find((p) => p.id === productId)?.name ?? productId;
+    const product = this.productsSignal().find((p) => p.id === productId);
+    if (product?.name) {
+      return product.name;
+    }
+
+    for (const list of this.listsSignal()) {
+      const item = list.products.find((entry) => entry.productId === productId);
+      if (item?.productName) {
+        return item.productName;
+      }
+    }
+
+    return 'Produto não cadastrado';
+  }
+
+  private resolveProductName(productId: string, explicitName?: string): string {
+    const trimmedName = explicitName?.trim();
+    if (trimmedName) {
+      return trimmedName;
+    }
+
+    const product = this.productsSignal().find((entry) => entry.id === productId);
+    return product?.name ?? this.getProductName(productId);
+  }
+
+  private repairProductNames(): void {
+    let changed = false;
+
+    this.listsSignal.update((lists) =>
+      lists.map((list) => ({
+        ...list,
+        products: list.products.map((item) => {
+          if (item.productName) {
+            return item;
+          }
+
+          const name = this.productsSignal().find((product) => product.id === item.productId)?.name;
+          if (!name) {
+            return item;
+          }
+
+          changed = true;
+          return { ...item, productName: name };
+        })
+      }))
+    );
+
+    if (changed) {
+      this.persist();
+    }
   }
 
   getCategoryById(categoryId: string): Category | undefined {
@@ -341,11 +392,15 @@ export class SmartListDataService {
     this.persist();
   }
 
-  addItemToList(listId: string, item: Omit<ShoppingListItem, 'subtotal'> & { unitValue: number }): ShoppingList {
+  addItemToList(
+    listId: string,
+    item: Omit<ShoppingListItem, 'subtotal'> & { unitValue: number; productName?: string }
+  ): ShoppingList {
     const subtotal = Number((item.quantity * item.unitValue).toFixed(2));
+    const productName = this.resolveProductName(item.productId, item.productName);
     const updatedLists = this.listsSignal().map((list) => {
       if (list.id !== listId) return list;
-      const nextProducts = [...list.products, { ...item, subtotal }];
+      const nextProducts = [...list.products, { ...item, productName, subtotal }];
       const { items, total } = this.recalculateListTotals(nextProducts);
       return { ...list, products: nextProducts, items, total };
     });
@@ -357,13 +412,18 @@ export class SmartListDataService {
     return updatedLists.find((l) => l.id === listId)!;
   }
 
-  updateItemInList(listId: string, index: number, item: Omit<ShoppingListItem, 'subtotal'> & { unitValue: number }): void {
+  updateItemInList(
+    listId: string,
+    index: number,
+    item: Omit<ShoppingListItem, 'subtotal'> & { unitValue: number; productName?: string }
+  ): void {
     const subtotal = Number((item.quantity * item.unitValue).toFixed(2));
+    const productName = this.resolveProductName(item.productId, item.productName);
     this.listsSignal.update((current) =>
       current.map((list) => {
         if (list.id !== listId) return list;
         const nextProducts = [...list.products];
-        nextProducts[index] = { ...item, subtotal };
+        nextProducts[index] = { ...item, productName, subtotal };
         const { items, total } = this.recalculateListTotals(nextProducts);
         return { ...list, products: nextProducts, items, total };
       })
@@ -404,7 +464,11 @@ export class SmartListDataService {
         });
       }
       const group = groups.get(key)!;
-      group.items.push({ ...item, productName: this.getProductName(item.productId), originalIndex });
+      group.items.push({
+        ...item,
+        productName: item.productName ?? this.getProductName(item.productId),
+        originalIndex
+      });
       group.subtotal = Number((group.subtotal + item.subtotal).toFixed(2));
     });
     return Array.from(groups.values());
