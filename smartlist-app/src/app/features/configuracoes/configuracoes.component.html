@@ -7,8 +7,37 @@
   </header>
 
   <article class="panel">
-    <h3>Perfil</h3>
-    <p class="notes">Autenticação Firebase será configurada em versão futura. Dados salvos localmente no navegador.</p>
+    <h3>Perfil do estabelecimento</h3>
+    <form class="form-card" (ngSubmit)="saveProfile()">
+      <label>
+        Nome para o app
+        <input type="text" [(ngModel)]="profileName" name="profileName" placeholder="Ex.: Ana" />
+      </label>
+
+      <label>
+        Endereço ou nome do estabelecimento
+        <input type="text" [(ngModel)]="establishmentLocationLabel" name="establishmentLocationLabel" placeholder="Ex.: Mercado Central ou Rua das Flores, 123" />
+      </label>
+
+      <div class="actions-row">
+        <button type="button" class="secondary" (click)="searchLocationByText()" [disabled]="isLocating">
+          {{ isLocating ? 'Buscando...' : 'Buscar localização' }}
+        </button>
+
+        <button type="button" class="secondary" (click)="detectLocation()" [disabled]="isLocating">
+          {{ isLocating ? 'Buscando...' : 'Usar minha localização' }}
+        </button>
+      </div>
+
+      @if (locationStatus) {
+        <p class="message">{{ locationStatus }}</p>
+      }
+
+      <button type="submit">Salvar perfil</button>
+      @if (message) {
+        <p class="message">{{ message }}</p>
+      }
+    </form>
   </article>
 
   <article class="panel">

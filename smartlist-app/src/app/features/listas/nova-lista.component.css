@@ -5,3 +5,9 @@
 label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
 input, select, textarea { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font: inherit; }
 button { border: 0; border-radius: 10px; padding: 10px 14px; background: #2c5aa0; color: white; cursor: pointer; width: fit-content; }
+button.secondary { background: #e2e8f0; color: #1e293b; }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+.location-row { display: flex; gap: 8px; align-items: center; }
+.location-row input { flex: 1; }
+.location-row button { white-space: nowrap; }
+.location-status { margin: -4px 0 0; font-size: 0.875rem; color: #475569; }

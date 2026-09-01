@@ -28,15 +28,25 @@
 
     <label>
       Local da compra *
-      <input
-        [(ngModel)]="form.location"
-        name="location"
-        required
-        autocomplete="off"
-        (focus)="showLocationSuggestions = true"
-        (input)="form.locationId = ''; showLocationSuggestions = true"
-      />
+      <div class="location-row">
+        <input
+          [(ngModel)]="form.location"
+          name="location"
+          required
+          autocomplete="off"
+          [placeholder]="isLocating ? 'Detectando localização...' : 'Endereço ou estabelecimento'"
+          [disabled]="isLocating"
+          (focus)="showLocationSuggestions = true"
+          (input)="form.locationId = ''; showLocationSuggestions = true; locationStatus = ''"
+        />
+        <button type="button" class="secondary" (click)="useCurrentLocation()" [disabled]="isLocating">
+          {{ isLocating ? 'Localizando...' : 'Usar minha localização' }}
+        </button>
+      </div>
     </label>
+    @if (locationStatus) {
+      <p class="location-status">{{ locationStatus }}</p>
+    }
     @if (showLocationSuggestions && form.location) {
       <ul class="autocomplete-list">
         @for (loc of locationSuggestions; track loc.id) {

@@ -114,8 +114,15 @@ export class ListaDetalheComponent implements OnInit {
       return;
     }
 
+    const productName =
+      this.form.productSearch.trim() ||
+      this.form.productName.trim() ||
+      this.data.products().find((product) => product.id === productId)?.name ||
+      '';
+
     const item = {
       productId,
+      productName,
       categoryId,
       quantity: Number(this.form.quantity),
       unitValue: Number(this.form.unitValue),
